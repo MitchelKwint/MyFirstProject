@@ -9,14 +9,20 @@
 /**
  * Description of DbHandler
  *
- * @author Gebruiker
+ * @author Gebruiker    
  */
-$woord = "lepel";
-$db = new DbHandler();
-$db ->findWoord($woord);
+//$woord = "lepel";
+//$db = new DbHandler();
+//$db ->findWoord($woord);
+include_once '_config.php';
 
 class DbHandler {
+    private $woord;
+    private $gevonden;
+
+
     public function findWoord($woord) {
+        $this->woord = $woord;
         //Stap 1:Instellen van PDO
         $options = [
             PDO::ATTR_ERRMODE                   => PDO::ERRMODE_EXCEPTION,
@@ -27,8 +33,6 @@ class DbHandler {
         $adres = '127.0.0.1';
         $charset = 'utf8mb4';
         $db = 'palindroom';
-        $user = 'root';
-        $password = '';
         
         
         $host = "mysql:host=$adres;dbname=$db;charset=$charset";
@@ -37,19 +41,22 @@ class DbHandler {
         
         try{
             //stap 2: Connect met de database
-            $conn = new PDO($host, $user, $password, $options);
+            $conn = new PDO($host, user, password, $options);
             //stap 3: runnen sql query
             $stmt = $conn->query($sql);            
             //stap 4: ophalen van gegevenes over de uitgevoerde query
             if($stmt->rowCount()== 1){
-                echo "Woord:" . $woord . "<br>" . 'Woord gevonden';
+               $this->gevonden = true;
             } else {
-                echo "Woord:" . $woord . "<br>" . 'Woord niet gevonden'; 
+                $this->gevonden = false; 
             }
         }
              catch (PDOException $e) {
             echo 'jou text' . $e->getMessage() . "(" . $e->getCode() . ") . ";      
            
-        }
+        }   
+    }
+    public function isWoordGevonden(){
+        return $this->gevonden;
     }
 }
